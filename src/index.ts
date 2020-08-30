@@ -4,6 +4,7 @@ import Router from '@koa/router'
 import cors from '@koa/cors';
 import routes from './routes'
 import db from './db'
+import { Server } from 'http'
 
 interface IStartServerOpts {
   port: number
@@ -25,16 +26,11 @@ export async function startServer({ port, dbUrl }: IStartServerOpts) {
 
   app.use(router.routes())
 
-  let server: any
-  await new Promise((resolve) => server = app.listen(port, resolve))
+  const server: Server = await new Promise((resolve) => {
+    const server = app.listen(port, () => resolve(server))
+  })
 
-  return {
-    db: dbc,
-    stopServer: async () => {
-      await dbc.disconnect()
-      await server.close()
-    }
-  }
+  return async () => Promise.all([ dbc.disconnect(), server.close() ])
 }
 
 const PORT = 1337;

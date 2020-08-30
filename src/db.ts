@@ -41,5 +41,6 @@ async function connect(url: string) {
 
 export default {
   connect,
-  Pet
+  Pet,
+  PetType
 }

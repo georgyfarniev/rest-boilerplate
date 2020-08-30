@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rest api test example test one pet exists 1`] = `
+Object {
+  "__v": 0,
+  "_id": Any<String>,
+  "name": "Manis",
+  "type": "cat",
+}
+`;
