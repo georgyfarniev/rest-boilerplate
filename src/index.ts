@@ -11,8 +11,8 @@ interface IStartServerOpts {
 }
 
 // port and db are parameterized for testing
-export default async function startServer({ port, dbUrl }: IStartServerOpts) {
-  await db.connect(dbUrl)
+export async function startServer({ port, dbUrl }: IStartServerOpts) {
+  const dbc = await db.connect(dbUrl)
 
   const app = new Koa()
 
@@ -25,9 +25,16 @@ export default async function startServer({ port, dbUrl }: IStartServerOpts) {
 
   app.use(router.routes())
 
-  await new Promise((resolve) => app.listen(port, resolve))
+  let server: any
+  await new Promise((resolve) => server = app.listen(port, resolve))
 
-  return app
+  return {
+    db: dbc,
+    stopServer: async () => {
+      await dbc.disconnect()
+      await server.close()
+    }
+  }
 }
 
 const PORT = 1337;
