@@ -19,6 +19,9 @@ describe('rest api test example', () => {
 
   afterAll(async () => stopServer())
 
+  // Deleting all stuff to prevent side effects
+  afterEach(async () => db.Pet.deleteMany({}))
+
   test('list pets when empty', async () => {
     await expect(api.get('pets')).resolves.toHaveProperty('data', [])
   })
@@ -32,5 +35,27 @@ describe('rest api test example', () => {
     expect(data[0]).toMatchSnapshot({
       _id: expect.any(String)
     })
+  })
+
+  test('test creating pet via api positive', async () => {
+    await expect(api.get('pets')).resolves.toHaveProperty('data', [])
+
+    await expect(
+      api.post('pets', {
+        name: 'Chico',
+        type: db.PetType.Dog
+      })
+    ).resolves.toHaveProperty('status', 200)
+
+    const { data } = await api.get('pets')
+    expect(data).toHaveLength(1)
+  })
+
+  test('test creating pet via api negative (missing parameter)', async () => {
+    await expect(api.get('pets')).resolves.toHaveProperty('data', [])
+
+    await expect(
+      api.post('pets', { name: 'Chico' })
+    ).rejects.toHaveProperty('response.status', 400)
   })
 })

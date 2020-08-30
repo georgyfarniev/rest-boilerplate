@@ -18,8 +18,8 @@ interface IPet extends Document {
 }
 
 const PetSchema: Schema = new Schema({
-  name: String,
-  type: { type: String, enum: enumValues(PetType) }
+  name: { type: String, required: true },
+  type: { type: String, required: true, enum: enumValues(PetType) }
 })
 
 const Pet = mongoose.model<IPet>('Pet', PetSchema)
@@ -36,7 +36,7 @@ async function connect(url: string) {
 
   console.log('db connected')
 
-  return mongoose;
+  return mongoose
 }
 
 export default {
